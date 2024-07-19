@@ -1,20 +1,7 @@
-# Create random state/action pairs, let em loose on the grid with a shit policy, they'll sort it out. Cap the time taken at 200 steps
-# Also I hate this nonsense. Make moving from blue or green terminal. None of this infinite sequence crap.
-
-# Start at a selected position, add some epsilon greedy, very ez
-
-# What the fuck is this guy talking about importance values
-# I need to do off-policy learning, ok fine, cool, what the fuck is the problem
-# Why do i need to calculate anything it'll just fucking do it
-# That's the point of reinforcement learning???? I don't need to tell it shit?????
-# aaaa
-# ok, if something won't happen under the actual policy, it is ignored. that is all i hope.
-
-# Add some randomization. Use policy iteration for this. WHY THE FUCK THATS NOT APPROPRIATE FOR THE QUESTION AT HAND????????????????????
-
-# Gamma is put directly into the evaluation functions this time as it never changes
 import random
 
+# The optimal policy given by different runs may be different from other runs, this is just because there are multiple optimal policies
+# Evaluates a given action in a given state
 def evaluate(action, states, policy, x, y):
     # -50 is just a placeholder for if the selected action bumps into a black square, it doesn't effect the policy.
     if (y + action[1] > 4 or y + action[1] < 0 or x + action[0] > 4 or x + action[0] < 0) and states[y][x] != ".":
@@ -27,8 +14,10 @@ def evaluate(action, states, policy, x, y):
         return 2.5 + policy[4][4][0]*0.95
     elif states[y+action[1]][x+action[0]] == ".":
         return -50
-    else:
+    elif states[y][x] == states[y+action[1]][x+action[0]]:
         return -0.2 + policy[y+action[1]][x+action[0]][0]*0.95
+    else:
+        return 0 + policy[y+action[1]][x+action[0]][0]*0.95
     return 0
 
 def greedy(actions, states, policy, x, y):
@@ -59,6 +48,8 @@ def calculate_bellman(states, action, x, y, gamma, values):
         elif newX == 5 or newY == 5 or newX == -1 or newY == -1:
             # Doesn't transfer into a new state, so we use the policy from the current state
             newVal = -0.5 + values[x][y][0]*gamma
+        elif states[x][y] == states[newX][newY]:
+            newVal = -0.2 + values[newX][newY][0]*gamma
         else:
             newVal = 0 + values[newX][newY][0]*gamma
         if newVal >= returnValMax[0]:
@@ -116,11 +107,10 @@ def create_policy_2():
         policy.append(polLine)
     # This function only runs for a set number of steps and returns the policy at the end of that time.
     # While it isn't guaranteed to be optimal, it would have to be ludicrously unlucky to not do so.
-    # Every individual step is considered to be its own sequence for ease of computing.
     curr = None
     for i in range(40000):
         if curr == None:
-            curr = (random.randint(0, 4), random.randint(0, 4))
+            curr = (2, 2)
         if 0.85 <= random.random():
             selectedAction = actions[random.randint(0, 3)]
         else:
@@ -156,7 +146,6 @@ def create_policy_3():
         policy.append(polLine)
     # This function only runs for a set number of steps and returns the policy at the end of that time.
     # While it isn't guaranteed to be optimal, it would have to be ludicrously unlucky to not do so.
-    # Every individual step is considered to be its own sequence for ease of computing.
     curr = None
     for i in range(40000):
         if curr == None:
@@ -179,6 +168,7 @@ def create_policy_3():
     return policy
 
 def create_policy_4():
+    # Permuted Blue and Green
     data = open("info2.txt", "r")
     states = []
     values = []
@@ -193,8 +183,7 @@ def create_policy_4():
             valueLine.append([0, (0, 1)])
         states.append(line)
         values.append(valueLine)
-    # Running the bellman equations once doesn't exactly get us anywhere with a continuous process so we do it a few times.
-    # No terminal state, but the values don't go out of control by way of the policy ramming into walls every other move
+    # Nothing special just iterative policy evaluation again
     for i in range(200):
         newValues = []
         for j in range(5):

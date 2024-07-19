@@ -1,3 +1,5 @@
+# The optimal policy given by different runs may be different from other runs, this is just because there are multiple optimal policies
+
 def eval_state(states, action, x, y, gamma, policy):
     newX = x + action[0]
     newY = y + action[1]
@@ -32,35 +34,6 @@ def calculate_bellman(states, action, x, y, gamma, values):
             returnValMax[1] = i
         returnValAvg += newVal
     return returnValAvg*0.25
-
-def bellman():
-    # Sum of successor states, Sum of rewards, sum of actions 
-    # (actions given state)(reward + (gamma)(value of being in successor state))
-    data = open("info.txt", "r")
-    states = []
-    values = []
-    actions = ((0, 1), (1, 0), (0, -1), (-1, 0))
-    gamma = 0.95
-    for i in data:
-        i = i.strip()
-        line = []
-        valueLine = []
-        for j in i:
-            line.append(j)
-            valueLine.append(0)
-        states.append(line)
-        values.append(valueLine)
-    # I'm going to need somebody to explain this immediately. As far as I'm aware bellman equations cannot be solved explicitly in non finite MDPs.
-    # So what.
-    for i in range(1):
-        newValues = []
-        for j in range(5):
-            valueLine = []
-            for k in range(5):
-                valueLine.append(calculate_bellman(states, actions, j, k, gamma, values))
-            newValues.append(valueLine)
-        values = newValues
-    return values
 
 def value_iteration():
     data = open("info.txt", "r")
@@ -123,11 +96,6 @@ def iterative_policy_evaluation():
         values = newValues
     return values
 
-print("Bellman equation (1 iteration)")
-res = bellman()
-for i in res:
-    print(i)
-print("---------------")
 print("Value Iteration")
 res = value_iteration()
 for i in res:

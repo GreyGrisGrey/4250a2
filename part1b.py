@@ -1,4 +1,3 @@
-import random
 
 def eval_state(states, action, x, y, gamma, policy):
     newX = x + action[0]
@@ -33,35 +32,6 @@ def calculate_bellman(states, action, x, y, gamma, values):
             returnValMax[1] = i
         returnValAvg += newVal
     return returnValMax
-
-def bellman():
-    # Sum of successor states, Sum of rewards, sum of actions 
-    # (actions given state)(reward + (gamma)(value of being in successor state))
-    data = open("info.txt", "r")
-    states = []
-    values = []
-    actions = ((0, 1), (1, 0), (0, -1), (-1, 0))
-    gamma = 0.95
-    for i in data:
-        i = i.strip()
-        line = []
-        valueLine = []
-        for j in i:
-            line.append(j)
-            valueLine.append([0, 0])
-        states.append(line)
-        values.append(valueLine)
-    # I'm going to need somebody to explain this immediately. As far as I'm aware bellman equations cannot be solved explicitly in non finite MDPs.
-    # So what.
-    for i in range(1):
-        newValues = []
-        for j in range(5):
-            valueLine = []
-            for k in range(5):
-                valueLine.append(calculate_bellman(states, actions, j, k, gamma, values))
-            newValues.append(valueLine)
-        values = newValues
-    return values
 
 def value_iteration():
     data = open("info.txt", "r")
@@ -130,11 +100,6 @@ def iterative_policy_evaluation():
 # Values of x and y are backwards in iterative policy evaluation
 # They're right, but they're backwards
 # how and why
-print("--------------")
-print("Bellman Optimality")
-res = bellman()
-for i in res:
-    print(i)
 print("--------------")
 print("Value iteration")
 res = value_iteration()
