@@ -11,7 +11,7 @@ def evaluate(action, states, policy, x, y):
     elif states[y][x] == "B":
         return 5 + policy[4][2][0]*0.95
     elif states[y][x] == "G":
-        return 2.5 + policy[4][4][0]*0.95
+        return 2.5 + (policy[4][4][0]+policy[4][2][0])*0.95*0.5
     elif states[y+action[1]][x+action[0]] == ".":
         return -50
     elif states[y][x] == states[y+action[1]][x+action[0]]:
@@ -40,11 +40,11 @@ def calculate_bellman(states, action, x, y, gamma, values):
         newY = y + i[1]
         # If in Blue or Green, gets points, elif runs into wall, loses points, else nothing much happens
         if states[x][y] == "B":
-            newVal = 3.75 + (values[4][4][0]+values[3][2][0])*gamma/2
+            newVal = 3.75 + (values[4][4][0]+3*values[4][2][0])*gamma/4
         elif states[x][y] == ".":
             return -50
         elif states[x][y] == "G":
-            newVal = 3.75 + (values[4][4][0]+values[3][2][0])*gamma/2
+            newVal = 3.75 + (values[4][4][0]+3*values[4][2][0])*gamma/4
         elif newX == 5 or newY == 5 or newX == -1 or newY == -1:
             # Doesn't transfer into a new state, so we use the policy from the current state
             newVal = -0.5 + values[x][y][0]*gamma

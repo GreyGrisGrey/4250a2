@@ -7,7 +7,7 @@ def eval_state(states, action, x, y, gamma, policy):
     if states[x][y] == "B":
         return 5 + policy[3][2]*gamma
     elif states[x][y] == "G":
-        return 2.5 + policy[4][4]*gamma
+        return 2.5 + (policy[4][4]+policy[3][2])*gamma*0.5
     elif newX == 5 or newY == 5 or newX == -1 or newY == -1:
         # Doesn't transfer into a new state, so we use the policy from the current state
         return -0.5 + policy[x][y]*gamma
@@ -23,7 +23,7 @@ def calculate_bellman(states, action, x, y, gamma, values):
         if states[x][y] == "B":
             newVal = 5 + values[3][2]*gamma
         elif states[x][y] == "G":
-            newVal = 2.5 + values[4][4]*gamma
+            newVal = 2.5 + (values[4][4]+values[3][2])*gamma
         elif newX == 5 or newY == 5 or newX == -1 or newY == -1:
             # Doesn't transfer into a new state, so we use the policy from the current state
             newVal = -0.5 + values[x][y]*gamma
